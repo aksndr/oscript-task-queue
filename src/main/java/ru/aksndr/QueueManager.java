@@ -13,22 +13,23 @@ public class QueueManager {
     private TaskFactory taskFactory = null;
     private static final Logger logger = LoggerFactory.getLogger(QueueManager.class.getSimpleName());
 
-    public QueueManager(OScriptObject prgCtx) {
-        this.taskFactory = new TaskFactory(prgCtx);
-        logger.info("Started QueueManager "+ prgCtx.toString());
+    public QueueManager() {
+        this.taskFactory = new TaskFactory();
+        logger.info("Started QueueManager ");
     }
 
-    public Map runTask(Map<String, Object> taskParams) {
+    public Map runTask(OScriptObject prgCtx, Map<String, Object> taskParams) {
         logger.info("Started runTask");
         try {
             Map result = Utils.validateTaskParams(taskParams);
             if (!(boolean)result.get("ok"))
                 return result;
 
-            Task t = taskFactory.createTask(taskParams);
+            Task t = taskFactory.createTask(prgCtx, taskParams);
+
             t.run();
-            result = t.getResult();
-            return result;
+
+            return Utils.error("Task started.");
         } catch (Exception e) {
             logger.error("Failed runTask: " + e.toString());
             return Utils.error("Failed runTask: "+ e.toString());

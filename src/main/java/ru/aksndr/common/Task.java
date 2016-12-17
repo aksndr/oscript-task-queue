@@ -1,11 +1,14 @@
 package ru.aksndr.common;//Created by Arzamastsev on 09.11.2016.
 
 import com.opentext.livelink.oml.OScriptObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class Task implements Runnable {
+    private static final Logger logger = LoggerFactory.getLogger(Task.class.getSimpleName());
 
     private String script = null;
     private OScriptObject prgCtx = null;
@@ -20,7 +23,18 @@ public class Task implements Runnable {
 
     @Override
     public void run() {
-        this.result = Utils.ok("all ok");
+
+        try {
+            Thread.sleep(5000);
+            OScriptObject uSession = (OScriptObject) prgCtx.invokeScript("USession");
+            logger.info(uSession.toString());
+            this.result = (Map<String, Object>) OScriptObject.runScript("$LLIAPI.UsersPkg.NameGetByID", uSession, 1000);
+
+        } catch (Exception e) {
+            this.result = Utils.error(e.toString());
+            logger.error(e.toString());
+        }
+
         System.out.println("Executed: " + script + " prgCtx: " + prgCtx);
     }
 

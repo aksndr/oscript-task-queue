@@ -6,13 +6,7 @@ import java.util.Map;
 
 public class TaskFactory {
 
-    private OScriptObject prgCtx = null;
-
-    public TaskFactory(OScriptObject prgCtx) {
-        this.prgCtx = prgCtx;
-    }
-
-    public Task createTask(Map<String, Object> taskParams) {
+    public Task createTask(OScriptObject prgCtx, Map<String, Object> taskParams) {
 
         String script = (String) taskParams.get("script");
         Map params = (taskParams.containsKey("params")) ? (Map) taskParams.get("params") : null;
